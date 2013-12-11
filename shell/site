@@ -63,7 +63,7 @@ then
   fi
 fi
 
-cat /root/manager/$site_type.site | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
+cat nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
 
 echo "Created nginx site"
 
@@ -110,7 +110,7 @@ test:
 DOC
 )
 
-echo "$config" > /srv/configs/$site.database.yml
+echo "$config" > /etc/databases/$site.database.yml
 
 cat <<DOC
 ************************************************************************

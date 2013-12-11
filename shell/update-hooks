@@ -7,7 +7,7 @@ for repo in /repo/*.git; do
 
   site=`basename "$repo" .git`
   echo "Updating $site - $repo"
-  for hook in /root/manager/hooks/*; do
+  for hook in hooks/*; do
     dst=`basename "$hook"`
     cat $hook | sed "s/%domain/$site/g" > $dst;  
   done

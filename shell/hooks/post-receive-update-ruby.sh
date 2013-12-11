@@ -15,7 +15,6 @@
 #. /usr/share/doc/git-core/contrib/hooks/post-receive-email
 
 echo "Loading rvm"
-# . /etc/profile.d/rvm.sh  # Loading RVM
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
 if [ -e ".rvmrc" ]; then
@@ -35,7 +34,7 @@ if [ -e Gemfile ]; then
   bundle install --without development | grep -v Using
 fi
 
-dbfile="/srv/configs/%domain.database.yml"
+dbfile="/etc/databases/%domain.database.yml"
 if [ -d config ] && [ -e $dbfile ]; then
   echo "Setting up database.yml"
   cp $dbfile config/database.yml
@@ -44,6 +43,7 @@ fi
 if [ -e Rakefile ] && [ -d db/migrate ]; then
   echo "Migrating"
   bundle exec rake db:migrate
+  # [check] what if there's no bundle?
 fi
 
 if [ -d tmp ]; then
@@ -55,5 +55,3 @@ if [ -e script/restart.sh ]; then
   echo "Restarting mongrel server."
   script/restart.sh
 fi
-
-
