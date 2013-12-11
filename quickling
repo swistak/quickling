@@ -6,7 +6,7 @@ site_type=${2:-rails}
 if [ -z $site ] 
 then
   echo "Usage:"
-  echo "site domain.pl [site_type=rails]"
+  echo "quickling domain.pl [site_type=rails]"
   exit -1
 fi
 

@@ -1,3 +1,0 @@
-class Quickling < Thor
-
-end
