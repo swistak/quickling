@@ -12,7 +12,9 @@ GRANT ALL PRIVILEGES ON ${db}.* TO ${user}@localhost IDENTIFIED BY '${pw}';
 FlUSH PRIVILEGES;
 SQL
 
-cat <<CONFIG
+echo "Your database configuration:"
+
+config=<<CONFIG
 /** The name of the database for WordPress */
 define('DB_NAME', '$db');
 
@@ -22,3 +24,8 @@ define('DB_USER', '$user');
 /** MySQL database password */
 define('DB_PASSWORD', '$pw');
 CONFIG
+
+echo "$config" | tee /etc/databases/$site.database.php
+
+echo "\nYour database configuration was also written to /etc/databases/$site.database.php"
+

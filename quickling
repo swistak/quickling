@@ -2,11 +2,14 @@
 
 site=$1
 site_type=${2:-rails}
+db_type=${3:-postgres}
+
+quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [ -z $site ] 
 then
   echo "Usage:"
-  echo "quickling domain.pl [site_type=rails]"
+  echo "quickling domain.pl [rails|php] [postgres|mysql]"
   exit -1
 fi
 
@@ -29,7 +32,7 @@ chown -R git:git .
 
 cd hooks
 rm *
-for hook in hooks/*; do
+for hook in $quickling_dir/hooks/*; do
   dst=`basename "$hook"`
   cat $hook | sed "s/%domain/$site/g" > $dst;  
 done
@@ -67,51 +70,6 @@ cat nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
 
 echo "Created nginx site"
 
-# Postgres
-pw=`pwgen 16 1`
-db=`echo "$site" | sed 's/\./_/g'`
-user=`echo "$site" | sed 's/\./_/g'`
-
-su postgres -c "createuser $user -d -e -S -R"
-su postgres -c "psql -c \"ALTER USER \\\"$user\\\" WITH PASSWORD '$pw'\" -e"
-
-su postgres -c "createdb $db -e -E utf8 -O $site"
-su postgres -c "createdb test-$db -e -E utf8 -O $site"
-
-renv=${RAILS_ENV:-production}
-
-config=$(
-cat <<DOC
-$renv:
-  adapter:  postgresql
-
-  database: "$db"
-  username: "$user"
-  password: "$pw"
-  host:     localhost
-
-  encoding: unicode
-
-  pool: 5
-  timeout: 5000
-
-test:
-  adapter:  postgresql
-
-  database: "test-$db"
-  username: "$user"
-  password: "$pw"
-  host:     localhost
-
-  encoding: unicode
-
-  pool: 5
-  timeout: 5000
-DOC
-)
-
-echo "$config" > /etc/databases/$site.database.yml
-
 cat <<DOC
 ************************************************************************
 
@@ -121,6 +79,6 @@ git remote add $site ssh://$site/repo/$site.git # For existing project
 
 /etc/init/nginx restart # When you're ready
 
-Your database configuration was written to /srv/configs/$site.database.yml
-
 DOC
+
+exec "$quickling_dir/db/$db_type"
