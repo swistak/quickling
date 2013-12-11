@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# An example hook script for the "post-receive" event.
+#
+# The "post-receive" script is run after receive-pack has accepted a pack
+# and the repository has been updated.  It is passed arguments in through
+# stdin in the form
+#  <oldrev> <newrev> <refname>
+# For example:
+#  aa453216d1b3e49e7f6f98441fa56946ddcd6a20 68f7abf4e6f922807889f52bc043ecd31b79f814 refs/heads/master
+#
+# see contrib/hooks/ for a sample, or uncomment the next line and
+# rename the file to "post-receive".
+
+#. /usr/share/doc/git-core/contrib/hooks/post-receive-email
+
+unset GIT_DIR            # Reseting git directory so we can pull
+
+data=$(cat)
+
+# We notifty about commints only in master
+if [[ $data == *refs/heads/master* ]]; then
+  cd /srv/%domain
+  git pull # Update repository
+  git submodule update --init
+
+  if [ -e config.ru ] || [ -e config/environment.rb ] || [ -e Gemfile ]
+  then # Its a ruby app
+    echo $data | /repo/%domain.git/hooks/pr-update-rails.sh
+  fi
+
+  [ -e script/on_deploy ] && script/on_deploy
+  [ -e bin/on_deploy ]    && bin/on_deploy
+fi
+
+exec git-update-server-info # We set up GIT_DIR back
+

@@ -1,0 +1,126 @@
+#!/bin/bash
+
+site=$1
+site_type=${2:-rails}
+
+if [ -z $site ] 
+then
+  echo "Usage:"
+  echo "site domain.pl [site_type=rails]"
+  exit -1
+fi
+
+cd /repo
+if [ -d $site.git ] 
+then
+  read -p "/repo/$site.git already exists. Override? (y/N) " -r
+  if [[ $REPLY =~ ^[Yy]$ ]] 
+  then
+    rm -rf $site.git
+  else
+    exit 1
+  fi
+fi
+
+mkdir "$site.git"
+cd $site.git
+git init . --bare --shared
+chown -R git:git .
+
+cd hooks
+rm *
+for hook in hooks/*; do
+  dst=`basename "$hook"`
+  cat $hook | sed "s/%domain/$site/g" > $dst;  
+done
+echo "Hooks created"
+chmod 777 *
+
+cd /srv
+if [ -d $site ] 
+then
+  read -p "/srv/$site already exists. Override? (y/N) " -r
+  if [[ $REPLY =~ ^[Yy]$ ]] 
+  then
+    rm -rf $site
+  else
+    exit 1
+  fi
+fi
+
+git clone /repo/$site.git
+chown -R swistak:git $site
+cd $site
+
+echo "Cloned application."
+
+if [ -e /etc/nginx/sites/$site ]
+then
+  read -p "/etc/nginx/sites/$site already exists. Override? (y/N) " -r
+  if [[ ! $REPLY =~ ^[Yy]$ ]] 
+  then
+    exit 1
+  fi
+fi
+
+cat /root/manager/$site_type.site | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
+
+echo "Created nginx site"
+
+# Postgres
+pw=`pwgen 16 1`
+db=`echo "$site" | sed 's/\./_/g'`
+user=`echo "$site" | sed 's/\./_/g'`
+
+su postgres -c "createuser $user -d -e -S -R"
+su postgres -c "psql -c \"ALTER USER \\\"$user\\\" WITH PASSWORD '$pw'\" -e"
+
+su postgres -c "createdb $db -e -E utf8 -O $site"
+su postgres -c "createdb test-$db -e -E utf8 -O $site"
+
+renv=${RAILS_ENV:-production}
+
+config=$(
+cat <<DOC
+$renv:
+  adapter:  postgresql
+
+  database: "$db"
+  username: "$user"
+  password: "$pw"
+  host:     localhost
+
+  encoding: unicode
+
+  pool: 5
+  timeout: 5000
+
+test:
+  adapter:  postgresql
+
+  database: "test-$db"
+  username: "$user"
+  password: "$pw"
+  host:     localhost
+
+  encoding: unicode
+
+  pool: 5
+  timeout: 5000
+DOC
+)
+
+echo "$config" > /srv/configs/$site.database.yml
+
+cat <<DOC
+************************************************************************
+
+Ok. You're all set up! (I hope), anyway:
+git clone ssh://$site/repo/$site.git # For new project
+git remote add $site ssh://$site/repo/$site.git # For existing project
+
+/etc/init/nginx restart # When you're ready
+
+Your database configuration was written to /srv/configs/$site.database.yml
+
+DOC

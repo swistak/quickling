@@ -1,0 +1,23 @@
+server {
+    listen       80;
+    listen       443 ssl;
+
+    server_name  %domain *.%domain;
+
+    # Set the max size for file uploads
+    client_max_body_size 20M;
+
+    # vhost specific access log
+    access_log  /var/log/nginx/%domain.access.log  main;
+
+    charset utf8;
+
+    passenger_enabled on;
+    passenger_set_cgi_param HTTP_X_FORWARDED_PROTO $scheme;
+
+    root /srv/%domain/public;
+    rails_env production;
+
+    # ssl_certificate /srv/ssl/.chained.crt;
+    # ssl_certificate_key /srv/ssl/.key;
+}

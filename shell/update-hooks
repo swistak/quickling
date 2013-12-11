@@ -1,0 +1,18 @@
+#!/bin/bash
+
+cd /repo
+
+for repo in /repo/*.git; do
+  cd "$repo/hooks/"
+
+  site=`basename "$repo" .git`
+  echo "Updating $site - $repo"
+  for hook in /root/manager/hooks/*; do
+    dst=`basename "$hook"`
+    cat $hook | sed "s/%domain/$site/g" > $dst;  
+  done
+
+  chmod 777 *
+done
+
+echo "Done."
