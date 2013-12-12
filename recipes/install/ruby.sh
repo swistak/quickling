@@ -39,6 +39,8 @@ cd /opt
 
 mv /opt/nginx/conf/ /etc/nginx
 ln -s /etc/nginx/ /opt/nginx/conf
+mkdir -p /etc/nginx/sites
+mkdir -p /etc/nginx/sites-enabled
 
 wget -O init-deb.sh http://library.linode.com/assets/600-init-deb.sh
 mv init-deb.sh /etc/init.d/nginx

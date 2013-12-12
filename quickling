@@ -69,6 +69,7 @@ then
 fi
 
 cat $quickling_dir/nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
+ln -s /etc/nginx/sites-enabled/$site /etc/nginx/sites/$site
 
 echo "Created nginx site"
 
