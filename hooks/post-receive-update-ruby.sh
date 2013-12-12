@@ -34,7 +34,7 @@ if [ -e Gemfile ]; then
   bundle install --without development | grep -v Using
 fi
 
-dbfile="/etc/databases/%domain.database.yml"
+dbfile="/etc/databases/%domain.yml"
 if [ -d config ] && [ -e $dbfile ]; then
   echo "Setting up database.yml"
   cp $dbfile config/database.yml

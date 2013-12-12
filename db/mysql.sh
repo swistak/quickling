@@ -28,7 +28,7 @@ define('DB_PASSWORD', '$pw');
 CONFIG
 )
 
-echo "$config" | tee /etc/databases/$site.database.php
+echo "$config" | tee /etc/databases/$site.php
 
-echo -e "\nYour database configuration was also written to /etc/databases/$site.database.php"
+echo -e "\nYour database configuration was also written to /etc/databases/$site.php"
 
