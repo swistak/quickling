@@ -13,6 +13,7 @@ then
   exit -1
 fi
 
+mkdir -p /repo
 cd /repo
 if [ -d $site.git ] 
 then
@@ -39,6 +40,7 @@ done
 echo "Hooks created"
 chmod 777 *
 
+mkdir -p /srv
 cd /srv
 if [ -d $site ] 
 then
@@ -66,7 +68,7 @@ then
   fi
 fi
 
-cat nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
+cat $quickling_dir/nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
 
 echo "Created nginx site"
 
@@ -81,4 +83,5 @@ git remote add $site ssh://$site/repo/$site.git # For existing project
 
 DOC
 
+mkdir -p /etc/databases
 $quickling_dir/db/${db_type}.sh "$site"
