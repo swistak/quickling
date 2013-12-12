@@ -1,5 +1,7 @@
 #!/bin/bash
 
+quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 cd /repo
 
 for repo in /repo/*.git; do
@@ -7,9 +9,9 @@ for repo in /repo/*.git; do
 
   site=`basename "$repo" .git`
   echo "Updating $site - $repo"
-  for hook in hooks/*; do
+  for hook in $quickling_dir/hooks/*; do
     dst=`basename "$hook"`
-    cat $hook | sed "s/%domain/$site/g" > $dst;  
+    cat $hook | sed "s/%domain/$site/g" > $dst;
   done
 
   chmod 777 *

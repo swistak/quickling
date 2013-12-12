@@ -26,7 +26,7 @@ if [[ $data == *refs/heads/master* ]]; then
 
   if [ -e config.ru ] || [ -e config/environment.rb ] || [ -e Gemfile ]
   then # Its a ruby/rack app
-    echo $data | /repo/%domain.git/hooks/pr-update-ruby.sh
+    echo $data | /repo/%domain.git/hooks/post-receive-update-ruby.sh
   fi
 
   [ -e script/on_deploy ] && script/on_deploy
