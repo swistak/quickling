@@ -82,8 +82,8 @@ cat <<DOC
 ************************************************************************
 
 Ok. You're all set up! (I hope), anyway:
-git clone ssh://$site/repo/$site.git # For new project
-git remote add $site ssh://$site/repo/$site.git # For existing project
+git clone ssh://www@$site/repo/$site.git # For new project
+git remote add $site ssh://www@$site/repo/$site.git # For existing project
 
 /etc/init/nginx restart # When you're ready
 
