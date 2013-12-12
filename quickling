@@ -29,7 +29,7 @@ fi
 mkdir "$site.git"
 cd $site.git
 git init . --bare --shared
-chown -R git:git .
+chown -R www:www .
 
 cd hooks
 rm *
@@ -54,7 +54,7 @@ then
 fi
 
 git clone /repo/$site.git
-chown -R swistak:git $site
+chown -R www:www $site
 cd $site
 
 echo "Cloned application."
