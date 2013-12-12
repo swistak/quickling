@@ -71,9 +71,14 @@ fi
 cat $quickling_dir/nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
 ln -s /etc/nginx/sites{,-enabled}/$site
 
-echo "Created nginx site"
+echo "Created nginx site."
+
+mkdir -p /etc/databases
+$quickling_dir/db/${db_type}.sh "$site"
+
 
 cat <<DOC
+
 ************************************************************************
 
 Ok. You're all set up! (I hope), anyway:
@@ -84,5 +89,4 @@ git remote add $site ssh://$site/repo/$site.git # For existing project
 
 DOC
 
-mkdir -p /etc/databases
-$quickling_dir/db/${db_type}.sh "$site"
+

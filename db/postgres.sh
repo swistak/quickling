@@ -47,4 +47,4 @@ DOC
 
 echo "$config" > /etc/databases/$site.yml
 
-echo "Your database configuration was written to /etc/databases/$site.yml"
+echo -e "\nYour database configuration was written to /etc/databases/$site.yml"
