@@ -10,8 +10,8 @@ user=$db
 su postgres -c "createuser $user -d -e -S -R"
 su postgres -c "psql -c \"ALTER USER \\\"$user\\\" WITH PASSWORD '$pw'\" -e"
 
-su postgres -c "createdb $db -e -E utf8 -O $site"
-su postgres -c "createdb test-$db -e -E utf8 -O $site"
+su postgres -c "createdb $db -e -E utf8 -O $user"
+su postgres -c "createdb test-$db -e -E utf8 -O $user"
 
 renv=${RAILS_ENV:-production}
 
