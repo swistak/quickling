@@ -81,4 +81,4 @@ git remote add $site ssh://$site/repo/$site.git # For existing project
 
 DOC
 
-exec "$quickling_dir/db/$db_type"
+$quickling_dir/db/${db_type}.sh "$site"
