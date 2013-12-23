@@ -57,7 +57,7 @@ if [ -e script/restart.sh ]; then
 fi
 
 read oldrev newrev refname
-if [ ! -z `git diff --name-only $oldrev..$newrev | grep 'assets'` ]; then
+if [ ! -z "`git diff --name-only $oldrev..$newrev | grep 'assets'`" ]; then
   echo "Rebuilding assets"
   rm -rf public/assets/*;
   rake assets:precompile --trace
