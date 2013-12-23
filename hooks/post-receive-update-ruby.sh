@@ -55,3 +55,10 @@ if [ -e script/restart.sh ]; then
   echo "Restarting mongrel server."
   script/restart.sh
 fi
+
+read oldrev newrev refname
+if [ ! -z `git diff --name-only $oldrev..$newrev | grep 'assets'` ]; then
+  echo "Rebuilding assets"
+  rm -rf public/assets/*;
+  rake assets:precompile --trace
+fi
