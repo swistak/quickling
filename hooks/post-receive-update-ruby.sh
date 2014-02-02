@@ -46,16 +46,16 @@ if [ -e Rakefile ] && [ -d db/migrate ]; then
   # [check] what if there's no bundle?
 fi
 
-if [ -d tmp ]; then
-  echo "Restarting passenger."
-  touch tmp/restart.txt
-fi
-
 read oldrev newrev refname
 if [ ! -z "`git diff --name-only $oldrev..$newrev | grep 'assets'`" ]; then
   echo "Rebuilding assets"
   rm -rf public/assets/*;
   rake assets:precompile --trace
+fi
+
+if [ -d tmp ]; then
+  echo "Restarting passenger."
+  touch tmp/restart.txt
 fi
 
 if [ -e script/restart.sh ]; then
