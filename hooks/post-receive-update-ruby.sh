@@ -48,7 +48,6 @@ if [ -e Rakefile ] && [ -d db/migrate ] && [ ! -z "`git diff --name-only $oldrev
   # [check] what if there's no bundle?
 fi
 
-read oldrev newrev refname
 if [ ! -z "`git diff --name-only $oldrev..$newrev | grep 'assets'`" ]; then
   echo "Rebuilding assets"
   rm -rf public/assets/*;
