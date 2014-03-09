@@ -47,4 +47,11 @@ DOC
 
 echo "$config" > /etc/databases/$site.yml
 
+cat <<DOC >> /etc/databases/$site.sh
+database="$db"
+username="$user"
+password="$pw"
+host="localhost"
+DOC
+
 echo -e "\nYour database configuration was written to /etc/databases/$site.yml"

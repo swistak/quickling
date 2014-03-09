@@ -30,5 +30,13 @@ CONFIG
 
 echo "$config" | tee /etc/databases/$site.php
 
+cat <<DOC >> /etc/databases/$site.sh
+database="$db"
+username="$user"
+password="$pw"
+host="localhost"
+DOC
+
+
 echo -e "\nYour database configuration was also written to /etc/databases/$site.php"
 
