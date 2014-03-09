@@ -4,6 +4,8 @@ quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd /repo
 
+renv=${RAILS_ENV:-production}
+
 for repo in /repo/*.git; do
   cd "$repo/hooks/"
 
@@ -11,7 +13,7 @@ for repo in /repo/*.git; do
   echo "Updating $site - $repo"
   for hook in $quickling_dir/hooks/*; do
     dst=`basename "$hook"`
-    cat $hook | sed "s/%domain/$site/g" > $dst;
+    cat $hook | sed "s/%domain/$site/g" | sed "s/%renv/$renv/g" > $dst;
   done
 
   chmod 777 *
