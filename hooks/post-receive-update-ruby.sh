@@ -27,7 +27,9 @@ else
   rvm 1.9.3
 fi
 
-echo "I am `whoami` on `rvm-prompt`"
+export RAILS_ENV="%renv"
+echo "I am `whoami` on `rvm-prompt`. $RAILS_ENV"
+read oldrev newrev refname
 
 if [ -e Gemfile ]; then
   echo "Instaling bundle"
@@ -40,7 +42,7 @@ if [ -d config ] && [ -e $dbfile ]; then
   cp $dbfile config/database.yml
 fi
 
-if [ -e Rakefile ] && [ -d db/migrate ]; then
+if [ -e Rakefile ] && [ -d db/migrate ] && [ ! -z "`git diff --name-only $oldrev..$newrev | grep 'db/migrate'`" ]; then
   echo "Migrating"
   bundle exec rake db:migrate
   # [check] what if there's no bundle?

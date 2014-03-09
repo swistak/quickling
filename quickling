@@ -31,11 +31,12 @@ cd $site.git
 git init . --bare --shared
 chown -R www:www .
 
+renv=${RAILS_ENV:-production}
 cd hooks
 rm *
 for hook in $quickling_dir/hooks/*; do
   dst=`basename "$hook"`
-  cat $hook | sed "s/%domain/$site/g" > $dst;  
+  cat $hook | sed "s/%domain/$site/g" | sed "s/%renv/$renv/g" > $dst;
 done
 echo "Hooks created"
 chmod 777 *
