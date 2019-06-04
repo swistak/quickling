@@ -1,52 +1,30 @@
 # [TODO] Think about permissions especially to /srv chown it to www ?.
 # [TODO] Reorganize it, so the ruby installation is a separate step, then nginx is another, then db
 
-aptitude update
+sudo -i
 
-aptitude install build-essential openssl libreadline6 libreadline6-dev curl \
+apt update && apt upgrade
+
+apt install build-essential openssl libreadline6-dev curl \
   git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 \
   libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool \
-  bison git pwgen vim libcurl4-openssl-dev
+  bison git pwgen vim libcurl4-openssl-dev \
+  gawk, libffi-dev, libgdbm-dev, libncurses5-dev, pkg-config, libgmp-dev
 
 chmod 777 /opt
 
-adduser www
+adduser www --disabled-password --gecos ""
+usermod -a -G sudo www
+
+# RVM
 su www
 
+gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
 cd ~
-
 curl -L get.rvm.io | bash -s stable
+source /home/www/.rvm/scripts/rvm
 
-# echo >> .bashrc
-# echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*' >> .bashrc
+rvm install 2.6
+rvm use 2.6
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-rvm install 1.9.3
-rvm 1.9.3
-
-gem install passenger bundler
-
-passenger-install-nginx-module
-mkdir /var/log/nginx
-
-mkdir -p /srv/default
-touch /srv/default/index.html
-
-exit # Back to root
-
-cd /opt
-
-mv /opt/nginx/conf/ /etc/nginx
-ln -s /etc/nginx/ /opt/nginx/conf
-mkdir -p /etc/nginx/sites
-mkdir -p /etc/nginx/sites-enabled
-
-wget -O init-deb.sh http://library.linode.com/assets/600-init-deb.sh
-mv init-deb.sh /etc/init.d/nginx
-chmod +x /etc/init.d/nginx
-/usr/sbin/update-rc.d -f nginx defaults
-
-/etc/init.d/nginx start
-
-aptitude install postgresql-9.1 postgresql-client-9.1 libpq-dev
+gem install bundler
