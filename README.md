@@ -43,6 +43,24 @@ sudo gpg --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A17031138
 rvmsudo rvm get master
 ```
 
-#### Install Ruby
+#### Install Ruby for main user
 
-eg. `rvm install 3.4`
+Add main user to rvm group: `sudo usermod -a -G rvm $USER`
+
+Instll ruby eg. `rvm install 3.4`
+
+### Create www user
+
+Secondary unpriviliged user with no access to sudo
+
+```bash
+sudo adduser www --disabled-password --comment "WWW User"
+sudo usermod -a -G rvm www
+sudo su www
+cd ~
+mkdir .ssh
+chmod 700 .ssh
+cd .ssh
+echo "Public Key from your local machine" > authorized_keys
+chmod 600 authorized_keys
+```
