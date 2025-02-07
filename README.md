@@ -26,6 +26,5 @@ AAdd _public_ key to https://github.com/settings/keys
 ### Clone repo
 
 ```bash
-sudo -i
 git@github.com:swistak/quickling.git
 ```
