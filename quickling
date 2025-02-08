@@ -9,17 +9,14 @@ quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z $site ] 
 then
   echo "Usage:"
-  echo "quickling domain.pl [rails|php] [postgres|mysql]"
+  echo "quickling domain.pl [rails|php|discord] [postgres|mysql]"
   exit -1
 fi
 
-mkdir -p /repo
 cd /repo
-if [ -d $site.git ] 
-then
+if [ -d $site.git ]; then
   read -p "/repo/$site.git already exists. Override? (y/N) " -r
-  if [[ $REPLY =~ ^[Yy]$ ]] 
-  then
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
     rm -rf $site.git
   else
     exit 1
@@ -43,11 +40,9 @@ chmod 777 *
 
 mkdir -p /srv
 cd /srv
-if [ -d $site ] 
-then
+if [ -d $site ]; then
   read -p "/srv/$site already exists. Override? (y/N) " -r
-  if [[ $REPLY =~ ^[Yy]$ ]] 
-  then
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
     rm -rf $site
   else
     exit 1
@@ -60,23 +55,23 @@ cd $site
 
 echo "Cloned application."
 
-if [ -e /etc/nginx/sites/$site ]
-then
-  read -p "/etc/nginx/sites/$site already exists. Override? (y/N) " -r
-  if [[ ! $REPLY =~ ^[Yy]$ ]] 
-  then
-    exit 1
+if [ "$site_type" = "ruby" ]; then
+  if [ -e /etc/nginx/sites/$site ]; then
+    read -p "/etc/nginx/sites/$site already exists. Override? (y/N) " -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      exit 1
+    fi
   fi
+
+  cat $quickling_dir/nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
+  ln -s /etc/nginx/sites{,-enabled}/$site
+
+  echo "Created nginx site."
 fi
 
-cat $quickling_dir/nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
-ln -s /etc/nginx/sites{,-enabled}/$site
-
-echo "Created nginx site."
 
 mkdir -p /etc/databases
 $quickling_dir/db/${db_type}.sh "$site"
-
 
 cat <<DOC
 
@@ -86,7 +81,7 @@ Ok. You're all set up! (I hope), anyway:
 git clone ssh://www@$site/repo/$site.git # For new project
 git remote add $site ssh://www@$site/repo/$site.git # For existing project
 
-/etc/init/nginx restart # When you're ready
+/etc/init/nginx restart # When you're ready & needed
 
 DOC
 
