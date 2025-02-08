@@ -44,7 +44,7 @@ if [ -e Rakefile ] && [ -d db/migrate ] && [ ! -z "`git diff --name-only $oldrev
   bundle exec rake db:migrate
 fi
 
-if [ -d public/assets] && [ ! -z "`git diff --name-only $oldrev..$newrev | grep 'assets'`" ]; then
+if [ -d public/assets ] && [ ! -z "`git diff --name-only $oldrev..$newrev | grep 'assets'`" ]; then
   echo "Rebuilding assets"
   rm -rf public/assets/*;
   bundle exec rake assets:precompile --trace
