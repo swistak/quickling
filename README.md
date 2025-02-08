@@ -71,6 +71,13 @@ echo "Public Key from your local machine" > authorized_keys
 chmod 600 authorized_keys
 ```
 
+Add RVM source AT THE TOP of /home/www/.bashrc so that it runs even in non-login non-interactive shells
+
+Ubuntu RVM: `source "/etc/profile.d/rvm.sh"`
+
+Regular: `source $HOME/.rvm/scripts/rvm` 
+
+
 ### Create directories
 
 ```bash

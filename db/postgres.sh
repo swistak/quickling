@@ -47,11 +47,14 @@ DOC
 
 echo "$config" > /etc/databases/$site.yml
 
-cat <<DOC >> /etc/databases/$site.sh
-database="$db"
-username="$user"
-password="$pw"
-host="localhost"
+cat <<DOC > /etc/databases/$site.sh
+# Usage: source /etc/databases/$site.sh; PGPASSWORD=$PGPASSWORD psql -h "$PGHOST" -U "$PGUSER" "$PGDATABASE"
+PGDATABASE="$db"
+PGUSER="$user"
+PGPASSWORD="$pw"
+PGHOST="localhost"
 DOC
+
+chown www:www /etc/databases/$site.*
 
 echo -e "\nYour database configuration was written to /etc/databases/$site.yml"

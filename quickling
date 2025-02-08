@@ -4,75 +4,21 @@
 
 set -e
 
-site=$1
-site_type=${2:-rails}
-db_type=${3:-postgres}
+export site=$1
+export site_type=${2:-rails}
+export db_type=${3:-postgres}
 
-quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export renv=${RAILS_ENV:-production}
 
-if [ -z $site ] 
-then
-  echo "Usage:"
-  echo "quickling domain.pl [rails|php|ruby] [postgres|mysql]"
-  exit -1
-fi
 
-cd /repo
-if [ -d $site.git ]; then
-  read -p "/repo/$site.git already exists. Override? (y/N) " -r
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    rm -rf $site.git
-  else
-    exit 1
-  fi
-fi
-
-mkdir "$site.git"
-cd $site.git
-sudo -u www "git init . --bare --shared"
-
-renv=${RAILS_ENV:-production}
-cd hooks
-rm *
-for hook in $quickling_dir/hooks/*; do
-  dst=`basename "$hook"`
-  cat $hook | sed "s/%domain/$site/g" | sed "s/%renv/$renv/g" > $dst;
-done
-echo "Hooks created"
-chmod 777 *
-chown www:www *
-
-cd /srv
-if [ -d $site ]; then
-  read -p "/srv/$site already exists. Override? (y/N) " -r
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    rm -rf $site
-  else
-    exit 1
-  fi
-fi
-
-sudo -u wwww "git clone /repo/$site.git"
-echo "Cloned application."
-
-cd $site
-if [ "$site_type" != "ruby" ]; then
-  if [ -e /etc/nginx/sites/$site ]; then
-    read -p "/etc/nginx/sites/$site already exists. Override? (y/N) " -r
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-      exit 1
-    fi
-  fi
-
-  sudo "cat $quickling_dir/nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site"
-  sudo "ln -s /etc/nginx/sites{,-enabled}/$site"
-
-  echo "Created nginx site."
-fi
-
+sudo -u www q/repo "$1" "$2" "$3"
+sudo q/hooks "$1" "$2" "$3"
+sudo -u www q/srv "$1" "$2" "$3"
+sudo q/nginx "$1" "$2" "$3"
 
 sudo mkdir -p /etc/databases
-$quickling_dir/db/${db_type}.sh "$site"
+sudo db/${db_type}.sh "$site"
 
 set +e
 
