@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+site=$1
+site_type=${2:-rails}
+db_type=${3:-postgres}
+
+quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+renv=${RAILS_ENV:-production}
+
+cd /srv
+if [ -d $site ]; then
+  read -p "/srv/$site already exists. Override? (y/N) " -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    rm -rf $site
+  else
+    exit 1
+  fi
+fi
+
+git clone /repo/$site.git
+echo "Cloned application."
+

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+site=$1
+site_type=${2:-rails}
+db_type=${3:-postgres}
+
+cd /repo
+if [ -d $site.git ]; then
+  read -p "/repo/$site.git already exists. Override? (y/N) " -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    rm -rf $site.git
+  else
+    exit 1
+  fi
+fi
+
+mkdir "$site.git"
+cd $site.git
+git init . --bare --shared --initial-branch=master
+

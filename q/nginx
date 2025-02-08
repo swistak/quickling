@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+site=$1
+site_type=${2:-rails}
+db_type=${3:-postgres}
+
+
+if [ "$site_type" != "ruby" ]; then
+  if [ -e /etc/nginx/sites/$site ]; then
+    read -p "/etc/nginx/sites/$site already exists. Override? (y/N) " -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      exit 1
+    fi
+  fi
+
+  sudo cat $quickling_dir/nginx-sites/$site_type | sudo sed "s/%domain/$site/g" > /etc/nginx/sites/$site
+  sudo ln -s /etc/nginx/sites{,-enabled}/$site
+
+  echo "Created nginx site."
+fi
+

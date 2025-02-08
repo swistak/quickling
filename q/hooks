@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+site=$1
+site_type=${2:-rails}
+db_type=${3:-postgres}
+quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
+renv=${RAILS_ENV:-production}
+
+echo "Clening up default/sample hooks"
+rm /repo/$site.git/hooks/*
+
+echo "Copying hooks from $quickling_dir/hooks/*"
+for hook in "$quickling_dir"/hooks/*; do
+  dst=`basename "$hook"`
+  dst="/repo/$site.git/hooks/$dst"
+  echo "$hook -> $dst"
+  
+  cat $hook | sed "s/%domain/$site/g" | sed "s/%renv/$renv/g" > $dst;
+  
+  chown www:www $dst
+  chmod 700 $dst
+done
+
+echo "Hooks created"
