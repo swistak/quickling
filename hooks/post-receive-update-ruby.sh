@@ -22,9 +22,6 @@ if [ -e ".rvmrc" ]; then
 elif [ -e ".ruby-version" ]; then
   cd .; # T_T why autoloading of .ruby-version works on my machine and not here (and you need fucking cd .) is beyound me
   echo "Using .ruby-version and .ruby-gemset"
-else 
-  echo "Loading 1.9.3"
-  rvm 1.9.3
 fi
 
 export RAILS_ENV="%renv"
@@ -33,7 +30,7 @@ read oldrev newrev refname
 
 if [ -e Gemfile ]; then
   echo "Instaling bundle"
-  bundle install --without development | grep -v Using
+  bundle install --without development --deployment | grep -v Using
 fi
 
 dbfile="/etc/databases/%domain.yml"
@@ -45,22 +42,20 @@ fi
 if [ -e Rakefile ] && [ -d db/migrate ] && [ ! -z "`git diff --name-only $oldrev..$newrev | grep 'db/migrate'`" ]; then
   echo "Migrating"
   bundle exec rake db:migrate
-  # [check] what if there's no bundle?
 fi
 
-if [ ! -z "`git diff --name-only $oldrev..$newrev | grep 'assets'`" ]; then
+if [ -d public/assets] && [ ! -z "`git diff --name-only $oldrev..$newrev | grep 'assets'`" ]; then
   echo "Rebuilding assets"
   rm -rf public/assets/*;
-  rake assets:precompile --trace
+  bundle exec rake assets:precompile --trace
 fi
 
-if [ -d tmp ]; then
-  echo "Restarting passenger."
+if [ -f tmp/restart.txt ]; then
+  echo "Restarting passenger / using tmp/restart.txt"
   touch tmp/restart.txt
 fi
 
 if [ -e script/restart.sh ]; then
-  echo "Restarting mongrel server."
+  echo "Restarting using script/restart.sh"
   script/restart.sh
 fi
-
