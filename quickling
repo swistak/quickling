@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 site=$1
 site_type=${2:-rails}
 db_type=${3:-postgres}
@@ -72,6 +74,8 @@ fi
 
 mkdir -p /etc/databases
 $quickling_dir/db/${db_type}.sh "$site"
+
+set +e
 
 cat <<DOC
 
