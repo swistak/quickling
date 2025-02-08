@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: Each app gets its own user?
+
 set -e
 
 site=$1
@@ -27,8 +29,7 @@ fi
 
 mkdir "$site.git"
 cd $site.git
-git init . --bare --shared
-chown -R www:www .
+sudo -u www "git init . --bare --shared"
 
 renv=${RAILS_ENV:-production}
 cd hooks
@@ -39,8 +40,8 @@ for hook in $quickling_dir/hooks/*; do
 done
 echo "Hooks created"
 chmod 777 *
+chown www:www *
 
-mkdir -p /srv
 cd /srv
 if [ -d $site ]; then
   read -p "/srv/$site already exists. Override? (y/N) " -r
@@ -51,13 +52,11 @@ if [ -d $site ]; then
   fi
 fi
 
-git clone /repo/$site.git
-chown -R www:www $site
-cd $site
-
+sudo -u wwww "git clone /repo/$site.git"
 echo "Cloned application."
 
-if [ "$site_type" = "ruby" ]; then
+cd $site
+if [ "$site_type" != "ruby" ]; then
   if [ -e /etc/nginx/sites/$site ]; then
     read -p "/etc/nginx/sites/$site already exists. Override? (y/N) " -r
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -65,14 +64,14 @@ if [ "$site_type" = "ruby" ]; then
     fi
   fi
 
-  cat $quickling_dir/nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site
-  ln -s /etc/nginx/sites{,-enabled}/$site
+  sudo "cat $quickling_dir/nginx-sites/$site_type | sed "s/%domain/$site/g" > /etc/nginx/sites/$site"
+  sudo "ln -s /etc/nginx/sites{,-enabled}/$site"
 
   echo "Created nginx site."
 fi
 
 
-mkdir -p /etc/databases
+sudo mkdir -p /etc/databases
 $quickling_dir/db/${db_type}.sh "$site"
 
 set +e
