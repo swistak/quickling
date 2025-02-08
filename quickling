@@ -9,7 +9,7 @@ quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z $site ] 
 then
   echo "Usage:"
-  echo "quickling domain.pl [rails|php|discord] [postgres|mysql]"
+  echo "quickling domain.pl [rails|php|ruby] [postgres|mysql]"
   exit -1
 fi
 
