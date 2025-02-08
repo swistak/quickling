@@ -10,6 +10,12 @@ A set of scripts for staging servers, allowing for rapid deployments and setup o
 apt update && apt upgrade
 ```
 
+### Instll useful stuff
+
+```
+apt install pwgen
+```
+
 ### Generate ssh key
 
 ```bash
@@ -64,3 +70,22 @@ cd .ssh
 echo "Public Key from your local machine" > authorized_keys
 chmod 600 authorized_keys
 ```
+
+### Create directories
+
+```bash
+sudo mkdir -p /repo && sudo chown www:www /repo
+sudo mkdir -p /srv && sudo chown www:www /srv
+```
+
+### Setup postgresql
+
+Follow: https://ubuntu.com/server/docs/install-and-configure-postgresql
+
+Tl;Dr:
+
+```bash
+sudo apt install postgresql postgresql-client
+```
+
+
