@@ -71,7 +71,8 @@ echo "Public Key from your local machine" > authorized_keys
 chmod 600 authorized_keys
 ```
 
-Add RVM source AT THE TOP of /home/www/.bashrc so that it runs even in non-login non-interactive shells
+Add RVM source AT THE BOTTOM of /home/www/.bashrc so that it runs in non-login interactive shells
+(eg. via su). Post-receive update hook will load rvm on it's own.
 
 Ubuntu RVM: `source "/etc/profile.d/rvm.sh"`
 

@@ -15,7 +15,7 @@ if [ -d $site ]; then
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     rm -rf $site
   else
-    exit 1
+    exit 0
   fi
 fi
 

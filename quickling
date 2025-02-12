@@ -11,13 +11,20 @@ export db_type=${3:-postgres}
 export quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export renv=${RAILS_ENV:-production}
 
+if [ -z $site ]
+then
+  echo "Usage:"
+  echo "quickling domain.pl [rails|php|ruby] [postgres|mysql]"
+  exit -1
+fi
 
 sudo -u www q/repo "$1" "$2" "$3"
 sudo q/hooks "$1" "$2" "$3"
 sudo -u www q/srv "$1" "$2" "$3"
 sudo q/nginx "$1" "$2" "$3"
 
-sudo mkdir -p /etc/databases
+sudo mkdir -p /etc/databases/www
+sudo chown www:www /etc/databases/www
 sudo db/${db_type}.sh "$site"
 
 set +e

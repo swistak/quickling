@@ -24,8 +24,7 @@ if [[ $data == *refs/heads/master* ]]; then
   git pull # Update repository
   git submodule update --init
 
-  if [ -e config.ru ] || [ -e config/environment.rb ] || [ -e Gemfile ]
-  then # Its a ruby/rack app
+  if [ -e config.ru ] || [ -e config/environment.rb ] || [ -e Gemfile ]; then
     echo $data | /repo/%domain.git/hooks/post-receive-update-ruby.sh
   fi
 

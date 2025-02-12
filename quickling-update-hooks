@@ -9,14 +9,16 @@ renv=${RAILS_ENV:-production}
 for repo in /repo/*.git; do
   cd "$repo/hooks/"
 
-  site=`basename "$repo" .git`
-  echo "Updating $site - $repo"
-  for hook in $quickling_dir/hooks/*; do
+  echo "Copying hooks from $quickling_dir/hooks/*"
+  for hook in "$quickling_dir"/hooks/*; do
     dst=`basename "$hook"`
-    cat $hook | sed "s/%domain/$site/g" | sed "s/%renv/$renv/g" > $dst;
-  done
+    echo "$hook -> $repo/hooks/$dst"
 
-  chmod 777 *
+    cat "$hook" | sed "s/%domain/$site/g" | sed "s/%renv/$renv/g" > "$dst";
+
+    chown www:www $dst
+    chmod 700 $dst
+  done
 done
 
 echo "Done."

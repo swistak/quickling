@@ -14,23 +14,27 @@
 
 #. /usr/share/doc/git-core/contrib/hooks/post-receive-email
 
-echo "Loading rvm"
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-if [ -e ".rvmrc" ]; then
-  source .rvmrc && echo "Loaded .rvmrc" || echo "Error when loading .rvmrc"
-elif [ -e ".ruby-version" ]; then
-  cd .; # T_T why autoloading of .ruby-version works on my machine and not here (and you need fucking cd .) is beyound me
-  echo "Using .ruby-version and .ruby-gemset"
+if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
+  echo "Loading $HOME/.rvm/scripts/rvm"
+  source "$HOME/.rvm/scripts/rvm"
+elif [[ -s "/etc/profile.d/rvm.sh" ]]; then
+  echo "Loading /etc/profile.d/rvm.sh"
+  source "/etc/profile.d/rvm.sh"
+else
+  echo "Could not find .rvm"
+  exit 1
 fi
 
-export RAILS_ENV="%renv"
-echo "I am `whoami` on `rvm-prompt`. $RAILS_ENV"
+rvm use .
+
+export RAILS_ENV="production"
+echo "I am user: `whoami`. Rails env: $RAILS_ENV"
+
 read oldrev newrev refname
 
 if [ -e Gemfile ]; then
   echo "Instaling bundle"
-  bundle install --without development --deployment | grep -v Using
+  BUNDLE_WITHOUT=development BUNDLE_DEPLOYMENT=1 bundle install | grep -v Using
 fi
 
 dbfile="/etc/databases/%domain.yml"

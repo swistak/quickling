@@ -45,9 +45,9 @@ test:
 DOC
 )
 
-echo "$config" > /etc/databases/$site.yml
+echo "$config" > /etc/databases/www/$site.yml
 
-cat <<DOC > /etc/databases/$site.sh
+cat <<DOC > /etc/databases/www/$site.sh
 # Usage: source /etc/databases/$site.sh; PGPASSWORD=$PGPASSWORD psql -h "$PGHOST" -U "$PGUSER" "$PGDATABASE"
 PGDATABASE="$db"
 PGUSER="$user"
@@ -55,6 +55,6 @@ PGPASSWORD="$pw"
 PGHOST="localhost"
 DOC
 
-chown www:www /etc/databases/$site.*
+chown -R www:www /etc/databases/www
 
-echo -e "\nYour database configuration was written to /etc/databases/$site.yml"
+echo -e "\nYour database configuration was written to /etc/databases/www/$site.yml"

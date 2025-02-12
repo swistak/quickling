@@ -8,7 +8,7 @@ db_type=${3:-postgres}
 quickling_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 renv=${RAILS_ENV:-production}
 
-echo "Clening up default/sample hooks"
+echo "Clening up default/previous hooks"
 rm /repo/$site.git/hooks/*
 
 echo "Copying hooks from $quickling_dir/hooks/*"
